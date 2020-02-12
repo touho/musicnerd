@@ -1,0 +1,25 @@
+{
+    "dependencies": {
+        "express": "^4.17.1",
+        "lodash": "^4.17.15",
+        "nodemon": "^2.0.2",
+        "parcel-bundler": "^1.12.4",
+        "socket.io": "^2.3.0",
+        "vue": "^2.6.11",
+        "vue-hot-reload-api": "^2.3.4"
+    },
+    "scripts": {
+        "dev": "nodemon --ignore \"dist/**\" index.js"
+    },
+    "devDependencies": {
+        "@vue/component-compiler-utils": "^3.1.1",
+        "stylus": "^0.54.7",
+        "vue-template-compiler": "^2.6.11"
+    },
+    "prettier": {
+        "trailingComma": "es5",
+        "tabWidth": 4,
+        "semi": false,
+        "singleQuote": true
+    }
+}

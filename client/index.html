@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <title>Music Nerd</title>
+    <link href="https://fonts.googleapis.com/css?family=Viga&display=swap" rel="stylesheet">
+    <script id="socketioscript"></script>
+    <script>
+        // Hack to disable parcel bundling of socket.io.js
+		document.getElementById('socketioscript').src = "socket.io/socket.io.js"
+    </script>
+    <script>
+    </script>
+    <script defer src="index.js"></script>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+            font-family: Viga, Arial, Helvetica, sans-serif;
+            font-size: 4vh;
+            height: 100%;
+            overflow: hidden;
+            user-select: none;
+        }
+        input {
+            font-size: 4vh;
+            font-family: Viga, Arial, Helvetica, sans-serif;
+
+            outline: none;
+        }
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+</body>
+</html>
