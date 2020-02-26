@@ -1,5 +1,6 @@
 {
     "dependencies": {
+        "easymidi": "^1.0.3",
         "express": "^4.17.1",
         "lodash": "^4.17.15",
         "nodemon": "^2.0.2",
