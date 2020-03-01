@@ -21,6 +21,8 @@ import { scenes } from './scenes/scenes'
 
 let components = _.keyBy(scenes, 'name')
 
+let nameSettingTimeout = null
+
 export default {
     name: 'App',
     computed: {
@@ -78,12 +80,17 @@ export default {
         },
 
         setNameFromLocalStorage() {
+        	if (nameSettingTimeout) {
+        		return
+            }
+
 	        const tryToSetName = () => {
+		        nameSettingTimeout = null
 		        if (!window.actionHandler) {
-			        setTimeout(tryToSetName, 100)
+			        nameSettingTimeout = setTimeout(tryToSetName, 100)
 			        return
 		        }
-		        this.globalAction('setName', window.localStorage.musicNerdName)
+                this.globalAction('setName', window.localStorage.musicNerdName)
 	        }
 	        if (window.localStorage.musicNerdName) {
 		        tryToSetName()

@@ -13,6 +13,8 @@ let currentScene = null
 
 const connections = []
 
+module.exports.connections = connections
+
 function getAdmin() {
     return connections.filter(c => c.isAdmin)[0] || null
 }
@@ -24,12 +26,18 @@ function sendDatas() {
 }
 
 let scenesWithoutServer = ['Error', 'Home', 'EnterName']
-function setScene(name) {
+function setScene(name, parameters) {
+    if (currentScene) {
+        currentScene.destroy()
+    }
     try {
         let Class = scenesWithoutServer.includes(name)
             ? BaseScene
             : require(`./sceneGames/${name}`)
         currentScene = new Class(name)
+        if (parameters) {
+            currentScene.init(...parameters)
+        }
 
         for (let connection of connections) {
             connection.privateData = currentScene.getInitialPrivateData()
@@ -41,11 +49,14 @@ function setScene(name) {
 
 setInterval(sendDatas, 1000)
 
+let idCounter = 0
+
 class Connection {
     constructor(socket) {
         this.socket = socket
         this.isAdmin = false
         this.name = '-'
+        this.id = idCounter++
 
         this.privateData = currentScene
             ? currentScene.getInitialPrivateData()
@@ -73,9 +84,8 @@ class Connection {
         socket.on('action', (scene, name, ...data) => {
             if (this.isAdmin) {
                 let handler = {
-                    selectScene: sceneName => {
-                        setScene(sceneName)
-                        console.log('[Admin] Set scene to:', sceneName)
+                    selectScene: (sceneName, parameters) => {
+                        setScene(sceneName, parameters)
                     },
                     togglePause: () => {
                         if (!currentScene) return
@@ -90,12 +100,14 @@ class Connection {
                         data
                     )
                 } else if (handler) {
+                    console.log('[Admin]', scene, name, ...data)
                     handler(...data)
                     sendDatas()
                 } else {
                     console.warn('[Admin] Invalid action:', scene, name, data)
                 }
             } else {
+                console.log(`[action] ${this.name} (${this.id}):`, scene, name, ...data)
                 if (!scene) {
                     // Global action
                     if (name === 'setName') {
@@ -113,7 +125,11 @@ class Connection {
                         )
                         return
                     }
-                    currentScene.handleAction(name, data, this.privateData)
+                    try {
+                        currentScene.handleAction(name, data, this.privateData)
+                    } catch(e) {
+                        this.socket.emit('err', e.message)
+                    }
                 }
                 this.sendData()
             }

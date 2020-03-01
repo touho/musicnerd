@@ -5,8 +5,29 @@
         <div class="section">
             <div class="sectionTitle">All scenes</div>
             <template v-for="scene of scenes">
-                <button :class="{ selected: scene.name === publicData.scene }" @click="selectScene(scene.name)">
+                <button
+                    :class="{ selected: scene.name === publicData.scene }"
+                    @click="selectScene(scene.name)"
+                >
                     {{ scene.name }}
+                </button>
+                <br />
+            </template>
+
+            <div class="sectionTitle">Custom</div>
+            <template v-for="customScene of customScenes">
+                <button
+                    :class="{
+                        selected: customScene.scene.name === publicData.scene,
+                    }"
+                    @click="
+                        selectScene(
+                            customScene.scene.name,
+                            customScene.parameters
+                        )
+                    "
+                >
+                    {{ customScene.name }}
                 </button>
                 <br />
             </template>
@@ -51,7 +72,7 @@
 import { scenes } from './scenes'
 import _ from 'lodash'
 
-const HIDDEN_SCENES = ['Admin', 'EnterName']
+const HIDDEN_SCENES = ['Admin', 'EnterName', 'Error']
 
 export default {
     name: 'Admin',
@@ -60,6 +81,13 @@ export default {
         scenes: scenes.filter(s => !HIDDEN_SCENES.includes(s.name)),
         sortPrivateKey: null,
         sortInverse: false,
+        customScenes: [
+	        {
+	        	name: 'MuteVoting 4instr 5-5-5',
+		        scene: scenes.find(s => s.name === 'MuteVoting'),
+		        parameters: [['Bass', 'Guitar', 'Keyboards', 'Vocals'], [5, 5, 5]],
+	        },
+        ],
     }),
     computed: {
         columns() {
@@ -89,8 +117,8 @@ export default {
         },
     },
     methods: {
-        selectScene(sceneName) {
-            this.$emit('action', 'selectScene', sceneName)
+        selectScene(sceneName, parameters) {
+            this.$emit('action', 'selectScene', ...arguments)
         },
         sort(column) {
             if (column === this.sortPrivateKey) {

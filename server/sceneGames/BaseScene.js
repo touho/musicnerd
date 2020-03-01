@@ -7,6 +7,14 @@ module.exports = class BaseScene {
         this.name = name || this.name
     }
 
+    init() {
+
+    }
+
+    destroy() {
+
+    }
+
     // Override me
     getInitialPrivateData() {
         return {}
@@ -34,6 +42,7 @@ module.exports = class BaseScene {
             handler(...data)
         } else {
             console.warn(`Handler ${name} not found in scene ${this.name}.`)
+            throw new Error(`Scene action handler '${name}' not found`)
         }
     }
 }
