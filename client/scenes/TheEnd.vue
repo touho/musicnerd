@@ -51,7 +51,7 @@ export default {
         x: 200,
         y: 300,
         turnDirection: 1,
-        turnSpeed: 7,
+        turnSpeed: 4,
         direction: 0,
         worm: [],
         speed: 300,
@@ -110,7 +110,7 @@ export default {
             	this.speed = minSpeed + (maxSpeed - minSpeed) * (distanceFromTarget - minDistance) / (maxDistance - minDistance)
             }
 
-            this.direction += this.turnDirection * dt * this.turnSpeed
+            this.direction += this.turnDirection * dt * (this.turnSpeed + this.speed / 200)
 
             for (let i = this.worm.length - 1; i >= 1; i--) {
                 this.worm[i] = this.worm[i + -1]
@@ -144,7 +144,7 @@ export default {
 	        } else {
 		        this.turnDirection = this.turnDirection > 0 ? -1 : 1
 	        }
-	        setTimeout(updateDirection, 80 + Math.random() * 100)
+	        setTimeout(updateDirection, 150 + Math.random() * 200 - this.speed / 3)
         }
 	    setTimeout(updateDirection, 300)
     },
