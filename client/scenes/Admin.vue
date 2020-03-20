@@ -35,10 +35,10 @@
 
         <div class="section">
             <div class="sectionTitle">Tools</div>
-            <button ref="startButton" class="startButton" v-if="publicData && publicData.state === 'instructions'" @click="$emit('action', 'setState', 'countdown')">Start!</button>
-            <button v-if="publicData && publicData.state === 'running'" @click="$emit('action', 'setState', 'paused')">Pause</button>
-            <button v-if="publicData && publicData.state === 'paused'" @click="$emit('action', 'setState', 'running')">Continue</button>
-            <button v-if="publicData && publicData.state === 'running'" @click="$emit('action', 'setState', 'results')">Stop!</button>
+            <button ref="startButton" class="startButton" v-show="publicData && publicData.state === 'instructions'" @click="setState('countdown')">Start!</button>
+            <button v-if="publicData && publicData.state === 'running'" @click="setState('paused')">Pause</button>
+            <button v-if="publicData && publicData.state === 'paused'" @click="setState('running')">Continue</button>
+            <button v-if="publicData && publicData.state === 'running'" @click="setState('results')">Stop!</button>
         </div>
 
         <div class="section">
@@ -132,8 +132,13 @@ export default {
         })
     },
 	methods: {
+    	setState(state) {
+		    this.$emit('action', 'setState', state)
+            blur()
+        },
         selectScene(sceneName, parameters) {
             this.$emit('action', 'selectScene', ...arguments)
+	        blur()
         },
         sort(column) {
             if (column === this.sortPrivateKey) {
@@ -145,9 +150,14 @@ export default {
         },
     },
 }
+
+function blur() {
+	document.activeElement && document.activeElement.blur && document.activeElement.blur();
+}
 </script>
 
 <style scoped lang="stylus">
+    @import "variables.styl"
 h2 {
     margin: 10px 5px
 }
@@ -163,10 +173,15 @@ h2 {
 }
 .section {
     display inline-block
-    border: 1px solid purple
+    border: 1px solid $dimmer-color
     padding: 10px
 
+    margin: 4px
+
     vertical-align: top;
+    background $bg-color-dark
+
+    box-shadow $colorful-color 0 0 3px 3px
 
     .sectionTitle {
     }

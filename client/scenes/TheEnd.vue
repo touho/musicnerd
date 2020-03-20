@@ -6,24 +6,24 @@
             title="The End"
         ></SceneCommon>
 
-        <div class="coolText">Thank you for playing with Music Nerd!</div>
+        <div class="coolText thankYouText">Thank you for playing Music Nerd!</div>
 
-        <div
-            class="target"
-            :style="{
+        <div class="worm">
+            <div
+                    class="target"
+                    :style="{
                 top: Math.round(y) + 'px',
                 left: Math.round(x) + 'px',
                 filter: `grayscale(${Math.round(100 - 100 * Math.sqrt(heatValue + 0.2))}%)`,
                 'box-shadow': `#00eeff 0 0 ${Math.round(heatValue * 20)}px, #00eeff 0 0 ${Math.round(heatValue * 30)}px`
             }"
-        >
-            <div class="targetBackground" :style="{
+            >
+                <div class="targetBackground" :style="{
             	opacity: heatValue
             }"></div>
-            <div class="targetIcon coolText">♫</div>
-        </div>
+                <div class="targetIcon coolText">♫</div>
+            </div>
 
-        <div class="worm">
             <div
                 class="wormBall"
                 v-for="(ball, index) of worm"
@@ -49,13 +49,13 @@ export default {
     props: ['publicData', 'privateData'],
     data: () => ({
         x: 200,
-        y: 200,
+        y: 300,
         turnDirection: 1,
-        turnSpeed: 5,
+        turnSpeed: 7,
         direction: 0,
         worm: [],
         speed: 300,
-        length: 70,
+        length: 100,
         heatPoints: 0,
     }),
     computed: {
@@ -93,8 +93,21 @@ export default {
                 .multiplyScalar(this.speed * dt)
             position.add(delta)
 
-            if (new Vector(this.x, this.y).subtract(position).length() < 60) {
-                confusedUntil = Date.now() + 200
+            let distanceFromTarget = new Vector(this.x, this.y).subtract(position).length()
+            if (distanceFromTarget < 60) {
+                confusedUntil = Date.now() + 100
+            }
+
+            let minSpeed = 120
+            let maxSpeed = 400
+            let minDistance = 100
+            let maxDistance = 400
+            if (distanceFromTarget < minDistance) {
+            	this.speed = minSpeed
+            } else if (distanceFromTarget > maxDistance) {
+            	this.speed = maxSpeed
+            } else {
+            	this.speed = minSpeed + (maxSpeed - minSpeed) * (distanceFromTarget - minDistance) / (maxDistance - minDistance)
             }
 
             this.direction += this.turnDirection * dt * this.turnSpeed
@@ -106,13 +119,17 @@ export default {
 
             let target = new Vector(this.x, this.y)
 	        this.heatPoints = this.worm.map(p => Vector.fromArray(p).distanceSq(target)).reduce((prev, curr) => {
-	        	return prev + Math.min(1, 10 / (curr + 1000))
+	        	return prev + Math.min(1, 10 / (curr + 800))
             },  0)
 
             this.$forceUpdate()
         }
 
-        this.worm = Array(this.length).fill([this.x, this.y])
+        this.worm = [[this.x, this.y]]
+        const addWormBallWithDelay = (delay) => setTimeout(() => this.worm.push(this.worm[this.worm.length - 1]), delay)
+        for (let i = 1; i < this.length; i++) {
+        	addWormBallWithDelay(i * 12)
+        }
         setInterval(update, 1000 / fps)
 
         const updateDirection = () => {
@@ -127,7 +144,7 @@ export default {
 	        } else {
 		        this.turnDirection = this.turnDirection > 0 ? -1 : 1
 	        }
-	        setTimeout(updateDirection, 100 + Math.random() * 300)
+	        setTimeout(updateDirection, 80 + Math.random() * 100)
         }
 	    setTimeout(updateDirection, 300)
     },
@@ -136,7 +153,7 @@ export default {
     },
     methods: {
         getWormBallSize(index) {
-            return Math.round(10 + 200 / (index + 10))
+            return Math.round(10 + 200 / (index + 7))
         },
     },
 }
@@ -146,6 +163,11 @@ export default {
     @import "variables.styl"
 .Home {
 }
+    .thankYouText {
+        width: 90%
+        max-width 40vh
+        margin: auto auto
+    }
     .target {
         border: 2px solid
         border-radius 50%
@@ -188,6 +210,15 @@ export default {
             height: 100%
         }
     }
+
+        .worm {
+            overflow hidden
+            position absolute
+            width: 100%
+            height:    100vh
+            top: 0
+            left: 0
+        }
 
     .wormBall {
         width: 20px;
