@@ -1,3 +1,6 @@
+import './scenes/common.styl'
+
+
 import { createSocket } from './socket'
 
 let socket
@@ -22,6 +25,8 @@ window.actionHandler = null
 
 import Vue from 'vue'
 import App from './App'
+import SceneCommon from "./scenes/SceneCommon"
+import Instruction from "./scenes/Instruction"
 
 let rootComponent = new Vue({
     el: '#app',
@@ -30,5 +35,8 @@ let rootComponent = new Vue({
 function getApp() {
     return rootComponent.$children[0]
 }
+
+Vue.component('SceneCommon', SceneCommon)
+Vue.component('Instruction', Instruction)
 
 window.admin = () => socket.startAdmin()

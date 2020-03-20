@@ -35,9 +35,10 @@
 
         <div class="section">
             <div class="sectionTitle">Tools</div>
-            <button @click="$emit('action', 'togglePause')">
-                {{ publicData && publicData.paused ? 'continue' : 'pause' }}
-            </button>
+            <button ref="startButton" class="startButton" v-if="publicData && publicData.state === 'instructions'" @click="$emit('action', 'setState', 'countdown')">Start!</button>
+            <button v-if="publicData && publicData.state === 'running'" @click="$emit('action', 'setState', 'paused')">Pause</button>
+            <button v-if="publicData && publicData.state === 'paused'" @click="$emit('action', 'setState', 'running')">Continue</button>
+            <button v-if="publicData && publicData.state === 'running'" @click="$emit('action', 'setState', 'results')">Stop!</button>
         </div>
 
         <div class="section">
@@ -83,9 +84,14 @@ export default {
         sortInverse: false,
         customScenes: [
 	        {
-	        	name: 'MuteVoting 4instr 5-5-5',
+	        	name: 'MuteVoting 4instr 2-2-2',
 		        scene: scenes.find(s => s.name === 'MuteVoting'),
-		        parameters: [['Bass', 'Guitar', 'Keyboards', 'Vocals'], [5, 5, 5]],
+		        parameters: [['Bass', 'Guitar', 'Keyboards', 'Vocals'], [2, 2, 2]],
+	        },
+	        {
+		        name: 'MuteVoting 4instr 50-50-50',
+		        scene: scenes.find(s => s.name === 'MuteVoting'),
+		        parameters: [['Bass', 'Guitar', 'Keyboards', 'Vocals'], [50, 50, 50]],
 	        },
         ],
     }),
@@ -116,7 +122,16 @@ export default {
             return data
         },
     },
-    methods: {
+    mounted() {
+    	window.addEventListener('keydown', e => {
+    		if (e.key === 'Enter' || e.key === ' ') {
+    			if (this.publicData.state === 'instructions') {
+		            this.$refs.startButton.click();
+                }
+            }
+        })
+    },
+	methods: {
         selectScene(sceneName, parameters) {
             this.$emit('action', 'selectScene', ...arguments)
         },
@@ -160,4 +175,8 @@ h2 {
     font-family Helvetica, sans-serif
     font-size 14px
 }
+    .startButton {
+        padding: 10px;
+        font-size: 30px;
+    }
 </style>

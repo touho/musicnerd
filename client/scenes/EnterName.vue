@@ -4,7 +4,7 @@
 
         <input ref="input" type="text" v-model="name" @keypress="keypress"><br>
         <br>
-        <button @click="setName">Enter the game</button>
+        <button @click="setName">Go in!</button>
     </div>
 </template>
 
@@ -31,14 +31,14 @@
 </script>
 
 <style scoped lang="stylus">
+    @import "common.styl"
 .EnterName {
     text-align: center;
 }
     input {
         width: 90%
-    }
-    button {
-        font-size 4vh
-        padding: 5px 20px
+        background black
+        border: 1px solid $accent-color
+        color: $font-color
     }
 </style>

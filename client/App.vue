@@ -11,7 +11,8 @@
             :privateData="privateData"
         ></component>
 
-        <div class="paused" v-if="publicData.paused && !privateData.isAdmin">PAUSED</div>
+        <div class="paused" v-if="publicData.state === 'paused' && !privateData.isAdmin">PAUSED</div>
+        <div ref="countdown" class="countdown">{{publicData.countdown}}</div>
     </div>
 </template>
 
@@ -38,6 +39,15 @@ export default {
                 return true
             return false
         },
+        countdown() {
+        	if (this.publicData.state === 'countdown')
+        	    return this.publicData.countdown
+            else
+            	return 0
+        },
+        state() {
+        	return this.publicData.state
+        }
     },
     watch: {
 	    shouldEnterName() {
@@ -49,6 +59,20 @@ export default {
 	        if (this.shouldEnterName && window.localStorage.musicNerdName) {
 		        this.setNameFromLocalStorage()
 	        }
+        },
+	    countdown() {
+	    	if (this.publicData.state === 'instructions')
+	    		return
+	    	if (this.countdown > 0 && this.countdown <= 3) {
+                this.shoutText(this.countdown)
+            } else if (this.countdown === 0) {
+			    this.shoutText('Go!')
+            }
+        },
+        state() {
+	    	if (this.state === 'results') {
+			    this.shoutText('END')
+            }
         }
     },
     data: () => ({
@@ -57,6 +81,12 @@ export default {
         privateData: {},
     }),
     methods: {
+    	shoutText(text) {
+            this.$refs.countdown.textContent = text
+            this.$refs.countdown.classList.add('countdownAnimation')
+            setTimeout(() => this.$refs.countdown.classList.remove('countdownAnimation'), 900)
+
+        },
         action(name, ...data) {
             if (window.actionHandler) {
 	            window.actionHandler(this.scene, ...arguments)
@@ -106,7 +136,8 @@ export default {
 
 <style scoped lang="stylus">
 .App {
-    height: 100%
+    /*height: 100%*/
+    text-align center
 }
 
     .paused {
@@ -117,9 +148,31 @@ export default {
         height: 100vh
         text-align center
         padding-top: 20vh
-        color: rgba(255, 255, 255, 0.6)
-        background rgba(99, 99, 99, 0.9)
+        //color: rgba(255, 255, 255, 0.6)
+        background rgba(0, 0, 0, 0.9)
         font-size 14vw
         user-select none
     }
+    .countdown {
+        position fixed
+        top: 40%
+        font-size 45vw
+        left: 50%
+        transform translateX(-50%) translateY(-50%)
+        opacity 0
+        pointer-events: none;
+        &.countdownAnimation {
+            animation countdown 0.8s cubic-bezier(0.5, 0, 0.5, 0)
+        }
+    }
+@keyframes countdown {
+    0% {
+        opacity 1
+        font-soze: 30vh
+    }
+    100% {
+        opacity 0
+        font-size: 10vh
+    }
+}
 </style>

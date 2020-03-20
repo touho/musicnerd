@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <title>Music Nerd</title>
-    <link href="https://fonts.googleapis.com/css?family=Viga&display=swap" rel="stylesheet">
+<!--    <link href="https://fonts.googleapis.com/css?family=Changa:300&display=swap" rel="stylesheet">-->
     <script id="socketioscript"></script>
     <script>
         // Hack to disable parcel bundling of socket.io.js
@@ -14,18 +14,24 @@
     </script>
     <script defer src="index.js"></script>
     <style>
+        @font-face {
+            font-family: Changa;
+            src: url(font/Changa/static/Changa-Light.ttf);
+        }
+
         html, body {
             padding: 0;
             margin: 0;
-            font-family: Viga, Arial, Helvetica, sans-serif;
-            font-size: 4vh;
-            height: 100%;
-            overflow: hidden;
+            font-family: 'Changa', Arial, Helvetica, sans-serif;
+            font-size: 3.5vh;
+            /*height: 100%;*/
+            /*overflow: hidden;*/
+            overflow-x: hidden;
             user-select: none;
         }
         input {
             font-size: 4vh;
-            font-family: Viga, Arial, Helvetica, sans-serif;
+            font-family: 'Changa', Arial, Helvetica, sans-serif;
 
             outline: none;
         }

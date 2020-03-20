@@ -15,17 +15,19 @@ const connections = []
 
 module.exports.connections = connections
 
-function getAdmin() {
-    return connections.filter(c => c.isAdmin)[0] || null
-}
-
 function sendDatas() {
     for (let connection of connections) {
         connection.sendData()
     }
 }
 
-let scenesWithoutServer = ['Error', 'Home', 'EnterName']
+module.exports.sendDatas = sendDatas
+
+function getAdmin() {
+    return connections.filter(c => c.isAdmin)[0] || null
+}
+
+let scenesWithoutServer = ['Error', 'Home', 'EnterName', 'TheEnd']
 function setScene(name, parameters) {
     if (currentScene) {
         currentScene.destroy()
@@ -35,6 +37,7 @@ function setScene(name, parameters) {
             ? BaseScene
             : require(`./sceneGames/${name}`)
         currentScene = new Class(name)
+        currentScene.emitter.on('sendDatas', sendDatas)
         if (parameters) {
             currentScene.init(...parameters)
         }
@@ -87,9 +90,10 @@ class Connection {
                     selectScene: (sceneName, parameters) => {
                         setScene(sceneName, parameters)
                     },
-                    togglePause: () => {
+                    setState: (state) => {
                         if (!currentScene) return
-                        currentScene.paused = !currentScene.paused
+
+                        currentScene.setState(state)
                     },
                 }[name]
                 if (scene !== 'Admin') {
@@ -174,5 +178,9 @@ class Connection {
             }
         }
     }
-    destroyed() {}
+    destroyed() {
+        if (currentScene) {
+            currentScene.connectionLeft(this)
+        }
+    }
 }

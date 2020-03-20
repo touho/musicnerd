@@ -1,13 +1,11 @@
 <template>
     <div class="Home">
+        <SceneCommon :publicData="publicData" title="Music Nerd"></SceneCommon>
 
-        <h2>Music Nerd</h2>
-
-        <div>Welcome, {{privateData.name}}!</div>
-        <br>
-        <div>Please listen to the instructions.</div>
-
+        <div class="welcome">Welcome, {{privateData.name}}!</div>
         <button @click="$emit('globalAction', 'setName', '-')">Change name</button>
+        <br><br>
+        <div class="small">The game is starting soon. Please wait and stay alert at all times.</div>
     </div>
 </template>
 
@@ -19,10 +17,16 @@
 </script>
 
 <style scoped lang="stylus">
-    h2 {
-        color: #ff00ff
-    }
 .Home {
-text-align center
 }
+    .welcome {
+        font-size: 1.3rem;
+    }
+    .small {
+        font-size 0.7rem
+        padding: 1rem 1rem;
+    }
+    button {
+        font-size 0.5rem
+    }
 </style>

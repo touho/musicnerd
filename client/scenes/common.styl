@@ -1,0 +1,55 @@
+@import "variables.styl"
+
+body {
+  background $bg-color
+  color: $font-color
+  text-shadow black 1px 1px 3px
+}
+body {
+  //background-image: radial-gradient(rgba(200, 255, 255, 0.4), rgba(200, 255, 255, 0.05));
+  background: linear-gradient(to right, $bg-color-dark 0, $bg-color 40% 60%, $bg-color-dark 100%);
+}
+
+body::after {
+  content: "";
+  opacity: 0.4;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+
+  background-image: url('../img/bg.png');
+  background-attachment fixed
+  background-repeat repeat
+  background-position-x center
+  background-position-y top
+  background-size auto 100%
+}
+
+.coolText {
+  color white
+  text-shadow: #00b2da00 0 0 2px, #00cfff 0 0 23px;
+
+  text-shadow: rgba($font-color, 1) 0 0 5px, $font-color 0 0 23px;
+  color: white;
+}
+
+
+  button {
+    background radial-gradient(rgba(43, 100, 119, 0.2), rgba(29, 100, 117, 0.1));
+    color: white
+    padding: 1.5vh 2vh
+    font-size: 3vh
+    border: 1px solid $accent-color
+    text-shadow: rgba($accent-color, 0.7) 0 0 1vh;
+    outline none
+
+    margin: 2px
+
+    &:active, &.selected {
+      background $dimmer-color
+      background: radial-gradient(rgba($accent-color, 0), rgba($colorful-color, 0.6));
+    }
+  }
