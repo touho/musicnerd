@@ -13,7 +13,8 @@
             :style="{
                 top: Math.round(y) + 'px',
                 left: Math.round(x) + 'px',
-                filter: `grayscale(${Math.round(100 - 100 * Math.sqrt(heatValue + 0.2))}%)`
+                filter: `grayscale(${Math.round(100 - 100 * Math.sqrt(heatValue + 0.2))}%)`,
+                'box-shadow': `#00eeff 0 0 ${Math.round(heatValue * 20)}px, #00eeff 0 0 ${Math.round(heatValue * 30)}px`
             }"
         >
             <div class="targetBackground" :style="{
@@ -161,7 +162,8 @@ export default {
 
         transform translate(-50%, -50%)
 
-        box-shadow $colorful-color 0 0 5px, rgba($colorful-color, .5) 0 0 20px
+        // This is overridden
+        //box-shadow $colorful-color 0 0 5px, rgba($colorful-color, .5) 0 0 20px
 
         .targetIcon {
             position absolute

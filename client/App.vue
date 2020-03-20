@@ -84,7 +84,7 @@ export default {
     	shoutText(text) {
             this.$refs.countdown.textContent = text
             this.$refs.countdown.classList.add('countdownAnimation')
-            setTimeout(() => this.$refs.countdown.classList.remove('countdownAnimation'), 900)
+            setTimeout(() => this.$refs.countdown.classList.remove('countdownAnimation'), 400)
 
         },
         action(name, ...data) {
@@ -154,25 +154,33 @@ export default {
         user-select none
     }
     .countdown {
-        position fixed
+        position absolute
         top: 40%
-        font-size 45vw
+        font-size 10vw
         left: 50%
         transform translateX(-50%) translateY(-50%)
         opacity 0
+        transition all 0.5s cubic-bezier(.5, 0, 0.5, 0)
         pointer-events: none;
         &.countdownAnimation {
-            animation countdown 0.8s cubic-bezier(0.5, 0, 0.5, 0)
+            // animation countdown 1s cubic-bezier(0.5, 0, 0.5, 0)
+            //  -webkit-animation countdown 1s cubic-bezier(0.5, 0, 0.5, 0)
+            opacity 1
+            transition all 0.01s
+            font-size 30vw
         }
     }
 @keyframes countdown {
     0% {
+        //transform scale(1)
         opacity 1
-        font-soze: 30vh
+        transform scale(0.1)
+        font-size: 30vh
     }
     100% {
-        opacity 0
+        opacity 0.1
         font-size: 10vh
+        transform scale(0.1)
     }
 }
 </style>

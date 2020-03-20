@@ -7,7 +7,7 @@
         <div class="Tapper Main">
             <h2>{{ publicData.secondsLeft }} secs left</h2>
 
-            <div class="tapArea" @click="$emit('action', 'tap')">
+            <div class="tapArea" @mousedown="mouseDown" @touchstart="touchStart">
                 <div class="tapCount coolText">{{ privateData.taps > 0 ? privateData.taps : 'TAP' }}</div>
             </div>
 
@@ -23,6 +23,25 @@
 </template>
 
 <script>
+
+	function is_touch_device4() {
+
+		var prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
+
+		var mq = function (query) {
+			return window.matchMedia(query).matches;
+		}
+
+		if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+			return true;
+		}
+
+		// include the 'heartz' as a way to have a non matching MQ to help terminate the join
+		// https://git.io/vznFH
+		var query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
+		return mq(query);
+	}
+
 export default {
     name: 'Tapper',
     props: ['publicData', 'privateData'],
@@ -31,8 +50,23 @@ export default {
             '<b>Tap</b> as fast as you can',
             'The fastest tapper gets <gold>glory!</gold>',
             'There will be many rounds',
-        ]
+        ],
     }),
+	methods: {
+		tap() {
+			setTimeout(() => this.$emit('action', 'tap'), 0)
+		},
+        touchStart() {
+			if (is_touch_device4()) {
+				this.tap()
+            }
+        },
+        mouseDown() {
+	        if (!is_touch_device4()) {
+		        this.tap()
+	        }
+        }
+	},
 }
 </script>
 
