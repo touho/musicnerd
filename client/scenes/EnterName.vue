@@ -2,7 +2,7 @@
     <div class="EnterName">
         <h3>Please, enter your name</h3>
 
-        <input ref="input" type="text" v-model="name" @keypress="keypress"><br>
+        <input :maxlength="20" ref="input" type="text" v-model="name" @keypress="keypress"><br>
         <br>
         <button @click="setName">Go in!</button>
     </div>
@@ -40,5 +40,6 @@
         background black
         border: 1px solid $accent-color
         color: $font-color
+        text-align center
     }
 </style>

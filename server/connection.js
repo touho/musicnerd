@@ -40,6 +40,8 @@ function setScene(name, parameters) {
         currentScene.emitter.on('sendDatas', sendDatas)
         if (parameters) {
             currentScene.init(...parameters)
+        } else {
+            currentScene.init()
         }
 
         for (let connection of connections) {

@@ -7,7 +7,6 @@ const { connections } = require('../connection')
 module.exports = class MuteVoting extends BaseScene {
     instruments = []
     votes = {}
-    secondsLeft = 0
     times = []
     init(instruments, times) {
         this.instruments = instruments
@@ -17,32 +16,23 @@ module.exports = class MuteVoting extends BaseScene {
             .value()
 
         this.times = times
-        this.secondsLeft = this.times.shift()
 
         const handler = () => {
-            if (this.running) {
-                if (this.secondsLeft <= 0) {
+            let mutedInstrument = _.maxBy(
+                Object.keys(this.votes),
+                key => this.votes[key]
+            )
+            this.mute(mutedInstrument)
 
-                    let mutedInstrument = _.maxBy(
-                        Object.keys(this.votes),
-                        key => this.votes[key]
-                    )
-                    this.mute(mutedInstrument)
-
-	                if (this.times.length > 0) {
-		                this.secondsLeft = this.times.shift()
-	                } else {
-		                // No new timeouts
-		                return
-	                }
-                } else {
-                    this.secondsLeft--
-                }
+            if (this.times.length > 0) {
+                this.startTimer(this.times.shift(), handler)
+            } else {
+                // No new timeouts
+                return
             }
-            this.timeout = setTimeout(handler, 1000)
         }
 
-        this.timeout = setTimeout(handler, 1000)
+        this.startTimer(this.times.shift(), handler)
     }
 
     mute(instrument) {
@@ -58,10 +48,6 @@ module.exports = class MuteVoting extends BaseScene {
         if (Object.keys(this.votes).length === 1) {
             setTimeout(() => this.setState('results'), 2000)
         }
-    }
-
-    destroy() {
-        clearTimeout(this.timeout)
     }
 
     getInitialPrivateData() {
@@ -94,7 +80,7 @@ module.exports = class MuteVoting extends BaseScene {
         return {
             votes: this.votes,
             activeUsers: connections.length,
-	        secondsLeft: this.secondsLeft,
+	        secondsLeft: this.timer ? this.timer.secondsLeft : 0,
             instruments: this.instruments
         }
     }

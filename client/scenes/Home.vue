@@ -2,7 +2,7 @@
     <div class="Home">
         <SceneCommon :publicData="publicData" title="Music Nerd"></SceneCommon>
 
-        <div class="welcome">Welcome, {{privateData.name}}!</div>
+        <div class="welcome">Welcome, <span class="coolText">{{privateData.name}}</span>!</div>
         <button @click="$emit('globalAction', 'setName', '-')">Change name</button>
         <br><br>
         <div class="small">The game is starting soon. Please wait and stay alert at all times.</div>

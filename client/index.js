@@ -41,6 +41,6 @@ Vue.component('Instruction', Instruction)
 
 window.admin = () => socket.startAdmin()
 
-document.addEventListener('gesturestart', function (e) {
-    e.preventDefault();
-});
+// document.addEventListener('gesturestart', function (e) {
+//     e.preventDefault();
+// });

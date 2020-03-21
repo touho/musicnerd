@@ -1,9 +1,11 @@
 const EventEmitter = require('events');
 class SceneEmitter extends EventEmitter {}
 
+const { startTimer } = require('../util/timer')
+
 module.exports = class BaseScene {
     name = 'BaseScene'
-    state = 'instructions' // 'instructions' | 'countdown' | 'running' | 'paused' | 'results'
+    state = 'instructions' // 'instructions' | 'countdown' | 'running' | 'paused' | 'results' | 'over'
     countdown = 3
 
     constructor(name) {
@@ -16,7 +18,11 @@ module.exports = class BaseScene {
     }
 
     destroy() {
+        this.state = 'over'
 
+        if (this.timer) {
+            this.timer.stop()
+        }
     }
 
     // Override me
@@ -62,7 +68,6 @@ module.exports = class BaseScene {
             this.countdown = 4
             this._interval = setInterval(() => {
                 this.countdown--
-                console.log('cd', this.countdown)
                 if (this.countdown === 0) {
                     clearInterval(this._interval)
                     this.setState('running')
@@ -75,6 +80,13 @@ module.exports = class BaseScene {
         setTimeout(() => this.emitter.emit('sendDatas'), 0)
     }
 
-    connectionLeft() {
+    connectionLeft(connection) {
+    }
+
+    startTimer(seconds, callback) {
+        if (this.timer) {
+            this.timer.stop()
+        }
+        this.timer = startTimer(seconds, this, callback)
     }
 }
