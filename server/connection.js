@@ -53,6 +53,11 @@ function setScene(name, parameters) {
 }
 
 setInterval(sendDatas, 1000)
+// setInterval(() => {
+//     for (let connection of connections) {
+//         connection.socket.emit('')
+//     }
+// }, 100)
 
 let idCounter = 0
 
@@ -132,7 +137,7 @@ class Connection {
                         return
                     }
                     try {
-                        currentScene.handleAction(name, data, this.privateData)
+                        currentScene.handleAction(name, data, this.privateData, this)
                     } catch(e) {
                         this.socket.emit('err', e.message)
                     }

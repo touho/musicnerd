@@ -12,6 +12,7 @@ let midi = module.exports
 midi.midiEmitter = new MidiEmitter()
 
 midi.send = function(cc) {
+	console.log('midi:', cc)
 	output.send('cc', {
 		controller: cc,
 		value: 80,
@@ -34,8 +35,5 @@ midi.send = function(cc) {
 }
 
 input.on('noteon', function (msg) {
-	// do something with msg
-	console.log('noteon', msg)
-
-	midi.midiEmitter.emit('note')
+	midi.midiEmitter.emit('note', msg.note)
 });

@@ -4,6 +4,19 @@ const _ = require('lodash')
 
 const { connections } = require('../connection')
 
+let tappingTime = 10
+let tapResultTime = 5
+let bossingTime = 30
+
+let ccStop = 9
+let ccRunner = 10
+let songs = [
+    { name: 'Sandstorm', cc: ccRunner++ },
+    { name: 'Smells Like Teen Spirit', cc: ccRunner++ },
+    { name: 'Bohemian Rhapsody', cc: ccRunner++ },
+    { name: 'Let Me Entertain You', cc: ccRunner++ }
+]
+
 module.exports = class Tapper extends BaseScene {
     secondsLeft = 0
 
@@ -19,14 +32,14 @@ module.exports = class Tapper extends BaseScene {
 
     bossNames = []
 
-    init(bossControls = [['Humppa', '🎮', '🔊', 'Letka jenkka', '🔊', '♛'], ['jee', 'jaa']]) {
+    init(bossControls = [songs, songs, songs]) {
         this.bossControls = bossControls
         this.startTapping()
     }
 
     startTapping() {
         this.status = 'tap'
-        this.startTimer(2, () => {
+        this.startTimer(tappingTime, () => {
             this.startTapResults()
         })
     }
@@ -34,18 +47,21 @@ module.exports = class Tapper extends BaseScene {
     startTapResults() {
         this.status = 'tapResults'
 
-        this.tapResults = _.chain(connections).map(conn => ({
-            name: conn.name,
-            taps: conn.privateData.taps,
-            connection: conn
-        })).orderBy('taps', 'desc').value()
+        this.tapResults = _.chain(connections)
+            .map(conn => ({
+                name: conn.name,
+                taps: conn.privateData.taps,
+                connection: conn,
+            }))
+            .orderBy('taps', 'desc')
+            .value()
 
         for (let i = 0; i < this.tapResults.length; i++) {
             this.tapResults[i].connection.privateData.rank = i + 1
             delete this.tapResults[i].connection
         }
 
-        this.startTimer(3, () => {
+        this.startTimer(tapResultTime, () => {
             this.boss = _.maxBy(connections, c => c.privateData.taps)
             this.boss.privateData.isBoss = true
             this.bossNames.push(this.boss.name)
@@ -60,7 +76,8 @@ module.exports = class Tapper extends BaseScene {
     startBossing() {
         this.status = 'boss'
         this.currentlyPlayingControlIndex = null
-        this.startTimer(10, () => {
+        this.startTimer(bossingTime, () => {
+            midi.send(ccStop)
             this.bossControlIndex++
             if (this.bossControlIndex < this.bossControls.length) {
                 for (let conn of connections) {
@@ -87,27 +104,30 @@ module.exports = class Tapper extends BaseScene {
                     privateData.taps++
                 }
             },
-            bossControl: (index) => {
+            bossControl: index => {
                 if (this.status === 'boss' && privateData.isBoss) {
+                    let cc = this.bossControls[this.bossControlIndex][index].cc
+                    midi.send(cc)
                     this.currentlyPlayingControlIndex = index
-                    midi.send(10 + 10 * this.bossControlIndex + index)
                 }
-            }
+            },
         })
     }
 
     getPublicData() {
-        let leaderTaps = _.maxBy(connections, conn => conn.privateData.taps).privateData.taps || 0
+        let leaderTaps =
+            _.maxBy(connections, conn => conn.privateData.taps).privateData
+                .taps || 0
         return {
             leaderTaps,
             activeUsers: connections.length,
-	        secondsLeft: this.timer ? this.timer.secondsLeft : 0,
+            secondsLeft: this.timer ? this.timer.secondsLeft : 0,
             status: this.status,
-            bossControls: this.bossControls[this.bossControlIndex],
+            bossControls: this.bossControlIndex < this.bossControls.length && this.bossControls[this.bossControlIndex].map(control => control.name),
             bossName: this.boss && this.boss.name,
             tapResults: this.tapResults,
             currentlyPlayingControlIndex: this.currentlyPlayingControlIndex,
-            bossNames: this.bossNames
+            bossNames: this.bossNames,
         }
     }
 }

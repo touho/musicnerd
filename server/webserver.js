@@ -3,7 +3,12 @@ const ParcelBundler = require('parcel-bundler');
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+	pingTimeout: 4000,
+	pingInterval: 5000,
+	cookie: false,
+	transports: ['websocket', 'polling']
+});
 const config = require('./config')
 
 module.exports.socketIO = io
